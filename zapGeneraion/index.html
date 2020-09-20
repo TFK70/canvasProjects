@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body style="overflow: hidden">
+    <canvas></canvas>
+    <script>
+      const canv = document.getElementsByTagName("canvas")[0];
+      const x = canv.getContext("2d");
+      const pr = devicePixelRatio || 1;
+      const w = window.innerWidth;
+      const h = window.innerHeight;
+
+      const dividedBy = 200;
+      let matrix = [];
+
+      canv.width = w * pr;
+      canv.height = h * pr;
+      x.scale(pr, pr);
+      x.globalAlpha = 1;
+
+      const randomize = (from, to) => {
+        return Math.floor(Math.random() * (to - from) + from);
+      };
+
+      const initializeMatrix = () => {
+        for (let i = 0; i < dividedBy; i++) {
+          matrix.push([]);
+        }
+      };
+
+      const fillMatrixTemplate = () => {
+        for (let i = 0; i < matrix.length; i++) {
+          for (let j = 0; j < dividedBy; j++) {
+            matrix[j][i] = 0;
+          }
+        }
+      };
+
+      const generateMatrix = () => {
+        let beginPoint = randomize(0, matrix.length);
+
+        matrix[beginPoint][0] = 1;
+
+        for (let i = 1; i < matrix[0].length; i++) {
+          let step = randomize(0, 2) === 0 ? beginPoint - 1 : beginPoint + 1;
+          step < 0 ? step++ : null;
+          step > matrix[0].length - 1 ? step-- : null;
+          matrix[step][i] = 1;
+          beginPoint = step;
+        }
+      };
+
+      const render = () => {
+        x.clearRect(0, 0, 10, 10);
+        for (let i = 0; i < matrix.length - 1; i++) {
+          for (let j = 0; j < matrix[i].length - 1; j++) {
+            if (matrix[i][j] === 1) {
+              x.beginPath();
+              x.fillStyle = "yellow";
+              x.fillRect(
+                j * Math.ceil(w / dividedBy),
+                i * Math.ceil(h / dividedBy),
+                Math.floor(w / dividedBy) * 2,
+                Math.floor(h / dividedBy) * 2
+              );
+              x.fill();
+              x.closePath();
+            } else {
+              x.beginPath();
+              x.fillStyle = "blue";
+              x.fillRect(
+                j * Math.ceil(w / dividedBy),
+                i * Math.ceil(h / dividedBy),
+                Math.floor(w / dividedBy) * 2,
+                Math.floor(h / dividedBy) * 2
+              );
+              x.fill();
+              x.closePath();
+            }
+          }
+        }
+      };
+
+      setInterval(() => {
+        matrix = [];
+        initializeMatrix();
+        fillMatrixTemplate();
+        for (let i = 0; i < 30; i++) generateMatrix();
+        render();
+      },100);
+    </script>
+  </body>
+</html>

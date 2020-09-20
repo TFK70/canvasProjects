@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body style="overflow: hidden">
+    <canvas width="1920" height="1080"></canvas>
+
+    <script>
+      document.addEventListener("touchmove", function (e) {
+        e.preventDefault();
+      });
+      var c = document.getElementsByTagName("canvas")[0],
+        x = c.getContext("2d"),
+        pr = window.devicePixelRatio || 1,
+        w = window.innerWidth,
+        h = window.innerHeight;
+      c.width = w * pr;
+      c.height = h * pr;
+      x.scale(pr, pr);
+      x.globalAlpha = 0.6; // opacity
+
+      const randomize = (range, from = 1) => {
+        return Math.floor(Math.random() * (range - from) + from); // from...range
+      };
+
+      let colors = ['green', 'blue', 'red', 'yellow', 'black', 'white', 'pink', 'orange'];
+      let trackX = 0;
+      let trackY = 0;
+      let rows = 100;
+      let columnParameters = {
+        from: randomize(500, 100),
+        to: randomize(500, 100)
+      }
+      let bgMatrix = [];
+
+      const matrixTemplate = (r) => {
+        for(let i = 0; i < r; i++) {
+          bgMatrix.push([]);
+        }
+      }
+
+      matrixTemplate(rows);
+
+      const fillMatrix = () => {
+        for (let i = 0; i < rows; i++) {
+          let dividedBy = randomize(columnParameters.to, columnParameters.from);
+          for (let j = 0; j < dividedBy; j++) {
+            bgMatrix[i][j] = c.width / dividedBy;
+          }
+        }
+      };
+
+      const pixelize = () => {
+        x.clearRect(0,0,c.width,c.height);
+        trackX = 0;
+        trackY = 0;
+        for (let i = 0; i < bgMatrix.length; i++) {
+          for (let j = 0; j < bgMatrix[i].length; j++) {
+            x.beginPath();
+            x.fillStyle = colors[randomize(colors.length, 0)];
+            x.strokeStyle = "black";
+            x.fillRect(trackX, trackY, bgMatrix[i][j], c.height / rows);
+            x.stroke();
+            x.fill();
+            x.closePath();
+            trackX += bgMatrix[i][j];
+          }
+          trackX = 0;
+          trackY += c.height / rows;
+        }
+      };
+
+      setInterval(() => {
+        fillMatrix();
+        pixelize();
+      }, 200);
+    </script>
+  </body>
+</html>
