@@ -44,24 +44,6 @@
         let y = randomize(0, matrix.length);
         let x = randomize(0, 0);
 
-        let allowedToExecute = {
-          xAdd: true,
-          xSub: true,
-          yAdd: true,
-          ySub: true,
-          xac: 0,
-          xsc: 0,
-          yac: 0,
-          ysc: 0
-        }
-
-        const addAllTrackers = () => {
-          allowedToExecute.xac++;
-          allowedToExecute.xsc++;
-          allowedToExecute.yac++;
-          allowedToExecute.ysc++;
-        }
-
         matrix[x][y] = 1;
 
         const genStep = () => randomize(0,2)===0 ? randomize(0,2)===0 ? x++ : x-- : randomize(0,2)===0 ? y++ : y--;
