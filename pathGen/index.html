@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body style="overflow: hidden">
+    <canvas></canvas>
+    <script>
+      const canv = document.getElementsByTagName("canvas")[0];
+      const x = canv.getContext("2d");
+      const pr = devicePixelRatio || 1;
+      const w = window.innerWidth;
+      const h = window.innerHeight;
+
+      const dividedBy = 800;
+      let matrix = [];
+
+      canv.width = w * pr;
+      canv.height = h * pr;
+      x.scale(pr, pr);
+      x.globalAlpha = 1;
+
+      const randomize = (from, to) => {
+        return Math.floor(Math.random() * (to - from) + from);
+      };
+
+      const initializeMatrix = () => {
+        for (let i = 0; i < dividedBy; i++) {
+          matrix.push([]);
+        }
+      };
+
+      const fillMatrixTemplate = () => {
+        for (let i = 0; i < matrix.length; i++) {
+          for (let j = 0; j < dividedBy; j++) {
+            matrix[j][i] = 0;
+          }
+        }
+      };
+
+      const generateMatrix = () => {
+        let y = randomize(0, matrix.length);
+        let x = randomize(0, 0);
+
+        let allowedToExecute = {
+          xAdd: true,
+          xSub: true,
+          yAdd: true,
+          ySub: true,
+          xac: 0,
+          xsc: 0,
+          yac: 0,
+          ysc: 0
+        }
+
+        const addAllTrackers = () => {
+          allowedToExecute.xac++;
+          allowedToExecute.xsc++;
+          allowedToExecute.yac++;
+          allowedToExecute.ysc++;
+        }
+
+        matrix[x][y] = 1;
+
+        const genStep = () => randomize(0,2)===0 ? randomize(0,2)===0 ? x++ : x-- : randomize(0,2)===0 ? y++ : y--;
+
+        for (let i = 0; i < 900000; i++) {
+          genStep();
+
+          x < 0 ? x++ : null;
+          y < 0 ? y++ : null;
+
+          x > matrix[0].length - 1 ? x-- : null;
+          y > matrix.length - 1 ? y-- : null;
+
+          matrix[x][y] = 1;
+        }
+      };
+
+      const render = () => {
+        x.clearRect(0, 0, 10, 10);
+        for (let i = 0; i < matrix.length - 1; i++) {
+          for (let j = 0; j < matrix[i].length - 1; j++) {
+            if (matrix[i][j] === 1) {
+              x.beginPath();
+              x.fillStyle = "black";
+              x.fillRect(
+                j * Math.ceil(w / dividedBy),
+                i * Math.ceil(h / dividedBy),
+                Math.floor(w / dividedBy) * 2,
+                Math.floor(h / dividedBy) * 2
+              );
+              x.fill();
+              x.closePath();
+            } else {
+              x.beginPath();
+              x.fillStyle = "white";
+              x.fillRect(
+                j * Math.ceil(w / dividedBy),
+                i * Math.ceil(h / dividedBy),
+                Math.floor(w / dividedBy) * 2,
+                Math.floor(h / dividedBy) * 2
+              );
+              x.fill();
+              x.closePath();
+            }
+          }
+        }
+      };
+
+      initializeMatrix();
+      fillMatrixTemplate();
+      generateMatrix();
+      render();
+    </script>
+  </body>
+</html>
